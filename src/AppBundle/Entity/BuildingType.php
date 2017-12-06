@@ -36,6 +36,12 @@ class BuildingType
     private $upgradeTimePerLevel;
 
     /**
+     * @var BuildingCosts[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\BuildingCosts", mappedBy="buildingType")
+     */
+    private $cost;
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -81,6 +87,22 @@ class BuildingType
     public function setUpgradeTimePerLevel(int $upgradeTimePerLevel): void
     {
         $this->upgradeTimePerLevel = $upgradeTimePerLevel;
+    }
+
+    /**
+     * @return BuildingCosts[]
+     */
+    public function getCost(): array
+    {
+        return $this->cost;
+    }
+
+    /**
+     * @param BuildingCosts[] $cost
+     */
+    public function setCost(array $cost): void
+    {
+        $this->cost = $cost;
     }
 
 }

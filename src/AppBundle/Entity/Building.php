@@ -56,6 +56,8 @@ class Building
      */
     private $planet;
 
+
+
     /**
      * @return int
      */

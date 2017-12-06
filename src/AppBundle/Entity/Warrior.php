@@ -43,6 +43,11 @@ class Warrior
     private $type;
 
 
+    /**
+     * @var WarriorRequirements[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\WarriorRequirements", mappedBy="buildingType")
+     */
+    private $requirement;
 
     /**
      * @var Planet

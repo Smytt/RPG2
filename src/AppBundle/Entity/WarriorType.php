@@ -36,6 +36,19 @@ class WarriorType
     private $birthsPerMinute;
 
     /**
+     * @var WarriorRequirements[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\WarriorRequirements", mappedBy="warriorType")
+     */
+    private $requirements;
+
+
+    /**
+     * @var WarriorCosts[]
+     * @ORM\OneToMany(targetEntity="AppBundle\Entity\WarriorCosts", mappedBy="warriorType")
+     */
+    private $cost;
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -82,6 +95,40 @@ class WarriorType
     {
         $this->birthsPerMinute = $birthsPerMinute;
     }
+
+    /**
+     * @return WarriorRequirements[]
+     */
+    public function getRequirements(): array
+    {
+        return $this->requirements;
+    }
+
+    /**
+     * @param WarriorRequirements[] $requirements
+     */
+    public function setRequirements(array $requirements): void
+    {
+        $this->requirements = $requirements;
+    }
+
+    /**
+     * @return WarriorCosts[]
+     */
+    public function getCost(): array
+    {
+        return $this->cost;
+    }
+
+    /**
+     * @param WarriorCosts[] $cost
+     */
+    public function setCost(array $cost): void
+    {
+        $this->cost = $cost;
+    }
+
+
 
 
 }
