@@ -56,6 +56,17 @@ class Building
      */
     private $planet;
 
+    /**
+     * Building constructor.
+     * @param BuildingType $type
+     */
+    public function __construct(BuildingType $type)
+    {
+        $this->setType($type);
+        $this->setLevel($type->getStartWith());
+        $this->setIsUpdating(false);
+        $this->setUpdateDue(null);
+    }
 
 
     /**

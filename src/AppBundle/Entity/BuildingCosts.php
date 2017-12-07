@@ -35,9 +35,8 @@ class BuildingCosts
      */
     private $buildingType;
 
-
     /**
-     * @var Stock;
+     * @var StockType;
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\StockType")
      * @ORM\JoinColumn(name="stock_type_id", referencedColumnName="id")
      */
@@ -76,22 +75,6 @@ class BuildingCosts
     }
 
     /**
-     * @return Stock
-     */
-    public function getStock(): Stock
-    {
-        return $this->stockType;
-    }
-
-    /**
-     * @param Stock $stock
-     */
-    public function setStock(Stock $stock): void
-    {
-        $this->stockType = $stock;
-    }
-
-    /**
      * @return BuildingType
      */
     public function getBuildingType(): BuildingType
@@ -105,6 +88,22 @@ class BuildingCosts
     public function setBuildingType(BuildingType $buildingType): void
     {
         $this->buildingType = $buildingType;
+    }
+
+    /**
+     * @return StockType
+     */
+    public function getStockType(): StockType
+    {
+        return $this->stockType;
+    }
+
+    /**
+     * @param StockType $stockType
+     */
+    public function setStockType(StockType $stockType): void
+    {
+        $this->stockType = $stockType;
     }
 
 

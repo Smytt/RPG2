@@ -42,19 +42,23 @@ class Warrior
      */
     private $type;
 
-
-    /**
-     * @var WarriorRequirements[]
-     * @ORM\OneToMany(targetEntity="AppBundle\Entity\WarriorRequirements", mappedBy="buildingType")
-     */
-    private $requirement;
-
     /**
      * @var Planet
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Planet", inversedBy="warriors")
      * @ORM\JoinColumn(name="planet_id", referencedColumnName="id")
      */
     private $planet;
+
+    /**
+     * Warrior constructor.
+     * @param WarriorType $type
+     */
+    public function __construct(WarriorType $type)
+    {
+        $this->setType($type);
+        $this->setQuantity($type->getStartWith());
+        $this->setInQueue(0);
+    }
 
 
     /**
@@ -136,7 +140,6 @@ class Warrior
     {
         $this->planet = $planet;
     }
-
 
 }
 

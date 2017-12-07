@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -36,17 +37,23 @@ class WarriorType
     private $birthsPerMinute;
 
     /**
-     * @var WarriorRequirements[]
+     * @var Collection|WarriorRequirements[]
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\WarriorRequirements", mappedBy="warriorType")
      */
     private $requirements;
 
-
     /**
-     * @var WarriorCosts[]
+     * @var Collection|WarriorCosts[]
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\WarriorCosts", mappedBy="warriorType")
      */
     private $cost;
+
+
+    /**
+     * @var int
+     * @ORM\Column(name="start_with", type="integer")
+     */
+    private $startWith;
 
     /**
      * @return int
@@ -97,35 +104,51 @@ class WarriorType
     }
 
     /**
-     * @return WarriorRequirements[]
+     * @return Collection|WarriorRequirements[]
      */
-    public function getRequirements(): array
+    public function getRequirements(): Collection
     {
         return $this->requirements;
     }
 
     /**
-     * @param WarriorRequirements[] $requirements
+     * @param Collection|WarriorRequirements[] $requirements
      */
-    public function setRequirements(array $requirements): void
+    public function setRequirements(Collection $requirements): void
     {
         $this->requirements = $requirements;
     }
 
     /**
-     * @return WarriorCosts[]
+     * @return Collection|WarriorCosts[]
      */
-    public function getCost(): array
+    public function getCost(): Collection
     {
         return $this->cost;
     }
 
     /**
-     * @param WarriorCosts[] $cost
+     * @param Collection|WarriorCosts[] $cost
      */
-    public function setCost(array $cost): void
+    public function setCost(Collection $cost): void
     {
         $this->cost = $cost;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStartWith(): int
+    {
+        return $this->startWith;
+    }
+
+    /**
+     * @param int $startWith
+     */
+    public function setStartWith(int $startWith): void
+    {
+        $this->startWith = $startWith;
     }
 
 

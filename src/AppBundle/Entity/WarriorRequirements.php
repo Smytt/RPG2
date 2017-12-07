@@ -28,7 +28,6 @@ class WarriorRequirements
      */
     private $requiredLevel;
 
-
     /**
      * @var BuildingType;
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\BuildingType")

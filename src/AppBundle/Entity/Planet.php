@@ -2,6 +2,8 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -58,22 +60,32 @@ class Planet
     private $user;
 
     /**
-     * @var Building[]
+     * @var Collection|Building[]
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Building", mappedBy="planet")
      */
     private $buildings;
 
     /**
-     * @var Stock[]
+     * @var Collection|Stock[]
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Stock", mappedBy="planet")
      */
     private $stocks;
 
     /**
-     * @var Warrior[]
+     * @var Collection|Warrior[]
      * @ORM\OneToMany(targetEntity="AppBundle\Entity\Warrior", mappedBy="planet")
      */
     private $warriors;
+
+    /**
+     * Planet constructor.
+     */
+    public function __construct()
+    {
+        $this->setBuildings(new ArrayCollection());
+        $this->setStocks(new ArrayCollection());
+        $this->setWarriors(new ArrayCollection());
+    }
 
     /**
      * @return int
@@ -172,49 +184,49 @@ class Planet
     }
 
     /**
-     * @return Building[]
+     * @return Collection|Building[]
      */
-    public function getBuildings(): array
+    public function getBuildings(): Collection
     {
         return $this->buildings;
     }
 
     /**
-     * @param Building[] $buildings
+     * @param Collection|Building[] $buildings
      */
-    public function setBuildings(array $buildings): void
+    public function setBuildings($buildings): void
     {
         $this->buildings = $buildings;
     }
 
     /**
-     * @return Stock[]
+     * @return Collection|Stock[]
      */
-    public function getStocks(): array
+    public function getStocks(): Collection
     {
         return $this->stocks;
     }
 
     /**
-     * @param Stock[] $stocks
+     * @param Collection|Stock[] $stocks
      */
-    public function setStocks(array $stocks): void
+    public function setStocks($stocks): void
     {
         $this->stocks = $stocks;
     }
 
     /**
-     * @return Warrior[]
+     * @return Collection|Warrior[]
      */
-    public function getWarriors(): array
+    public function getWarriors(): Collection
     {
         return $this->warriors;
     }
 
     /**
-     * @param Warrior[] $warriors
+     * @param Collection|Warrior[] $warriors
      */
-    public function setWarriors(array $warriors): void
+    public function setWarriors($warriors): void
     {
         $this->warriors = $warriors;
     }

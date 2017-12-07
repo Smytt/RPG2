@@ -28,6 +28,13 @@ class StockType
      */
     private $type;
 
+
+    /**
+     * @var int
+     * @ORM\Column(name="start_with", type="integer")
+     */
+    private $startWith;
+
     /**
      * @return int
      */
@@ -58,6 +65,22 @@ class StockType
     public function setType(string $type): void
     {
         $this->type = $type;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStartWith(): int
+    {
+        return $this->startWith;
+    }
+
+    /**
+     * @param int $startWith
+     */
+    public function setStartWith(int $startWith): void
+    {
+        $this->startWith = $startWith;
     }
 
 

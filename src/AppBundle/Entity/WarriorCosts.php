@@ -36,7 +36,7 @@ class WarriorCosts
     private $warriorType;
 
     /**
-     * @var Stock;
+     * @var StockType;
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\StockType")
      * @ORM\JoinColumn(name="stock_type_id", referencedColumnName="id")
      */
