@@ -36,6 +36,19 @@ class StockType
     private $startWith;
 
     /**
+     * @var float
+     * @ORM\Column(name="cost_per_block_travel", type="float")
+     */
+    private $costPerBlockTravel;
+
+    /**
+     * @var float
+     * @ORM\Column(name="cost_per_year_travel", type="float")
+     */
+    private $costPerYearTravel;
+
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -81,6 +94,38 @@ class StockType
     public function setStartWith(int $startWith): void
     {
         $this->startWith = $startWith;
+    }
+
+    /**
+     * @return float
+     */
+    public function getCostPerBlockTravel(): float
+    {
+        return $this->costPerBlockTravel;
+    }
+
+    /**
+     * @param float $costPerBlockTravel
+     */
+    public function setCostPerBlockTravel(float $costPerBlockTravel): void
+    {
+        $this->costPerBlockTravel = $costPerBlockTravel;
+    }
+
+    /**
+     * @return float
+     */
+    public function getCostPerYearTravel(): float
+    {
+        return $this->costPerYearTravel;
+    }
+
+    /**
+     * @param float $costPerYearTravel
+     */
+    public function setCostPerYearTravel(float $costPerYearTravel): void
+    {
+        $this->costPerYearTravel = $costPerYearTravel;
     }
 
 

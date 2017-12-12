@@ -53,8 +53,9 @@ class Warrior
      * Warrior constructor.
      * @param WarriorType $type
      */
-    public function __construct(WarriorType $type)
+    public function __construct(WarriorType $type, Planet $planet)
     {
+        $this->setPlanet($planet);
         $this->setType($type);
         $this->setQuantity($type->getStartWith());
         $this->setInQueue(0);

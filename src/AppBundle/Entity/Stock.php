@@ -47,8 +47,9 @@ class Stock
      * Stock constructor.
      * @param StockType $type
      */
-    public function __construct(StockType $type)
+    public function __construct(StockType $type, Planet $planet)
     {
+        $this->setPlanet($planet);
         $this->setType($type);
         $this->setQuantity($type->getStartWith());
     }

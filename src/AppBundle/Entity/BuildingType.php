@@ -2,6 +2,7 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -109,17 +110,17 @@ class BuildingType
     }
 
     /**
-     * @return BuildingCosts[]
+     * @return Collection|BuildingCosts[]
      */
-    public function getCost(): array
+    public function getCost(): Collection
     {
         return $this->cost;
     }
 
     /**
-     * @param BuildingCosts[] $cost
+     * @param Collection|BuildingCosts[] $cost
      */
-    public function setCost(array $cost): void
+    public function setCost(Collection $cost): void
     {
         $this->cost = $cost;
     }

@@ -60,8 +60,9 @@ class Building
      * Building constructor.
      * @param BuildingType $type
      */
-    public function __construct(BuildingType $type)
+    public function __construct(BuildingType $type, Planet $planet)
     {
+        $this->setPlanet($planet);
         $this->setType($type);
         $this->setLevel($type->getStartWith());
         $this->setIsUpdating(false);
@@ -120,7 +121,7 @@ class Building
     /**
      * @return \DateTime
      */
-    public function getUpdateDue(): \DateTime
+    public function getUpdateDue(): ?\DateTime
     {
         return $this->updateDue;
     }
@@ -128,7 +129,7 @@ class Building
     /**
      * @param \DateTime $updateDue
      */
-    public function setUpdateDue(\DateTime $updateDue): void
+    public function setUpdateDue($updateDue): void
     {
         $this->updateDue = $updateDue;
     }
