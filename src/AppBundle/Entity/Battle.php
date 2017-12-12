@@ -71,15 +71,26 @@ class Battle
     private $winner;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="isActive", type="boolean")
+     */
+    private $isActive;
+
+    /**
      * Battle constructor.
      * @param User $aggressor
      * @param User $victim
+     * @param int $timeInEachDirection
      */
-    public function __construct(User $aggressor, User $victim)
+    public function __construct(User $aggressor, User $victim, int $timeInEachDirection)
     {
         $this->setAggressor($aggressor);
         $this->setVictim($victim);
         $this->setBattleDeclare(new \DateTime());
+        $this->setBattleHappen($timeInEachDirection);
+        $this->setReturnDue($timeInEachDirection);
+        $this->setIsActive(true);
     }
 
 
@@ -120,13 +131,14 @@ class Battle
     /**
      * Set battleHappen
      *
-     * @param \DateTime $battleHappen
+     * @param int $timeInEachDirection
      *
      * @return Battle
      */
-    public function setBattleHappen($battleHappen)
+    public function setBattleHappen(int $timeInEachDirection)
     {
-        $this->battleHappen = $battleHappen;
+        $now = new \DateTime();
+        $this->battleHappen = $now->add(new \DateInterval("P0DT{$timeInEachDirection}S"));
 
         return $this;
     }
@@ -144,13 +156,15 @@ class Battle
     /**
      * Set returnDue
      *
-     * @param \DateTime $returnDue
+     * @param int $timeInEachDirection
      *
      * @return Battle
      */
-    public function setReturnDue($returnDue)
+    public function setReturnDue(int $timeInEachDirection)
     {
-        $this->returnDue = $returnDue;
+        $now = new \DateTime();
+        $totalTime = $timeInEachDirection * 2;
+        $this->returnDue = $now->add(new \DateInterval("P0DT{$totalTime}S"));
 
         return $this;
     }
@@ -227,6 +241,22 @@ class Battle
     public function setWarriors($warriors): void
     {
         $this->warriors = $warriors;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActive(): bool
+    {
+        return $this->isActive;
+    }
+
+    /**
+     * @param bool $isActive
+     */
+    public function setIsActive(bool $isActive): void
+    {
+        $this->isActive = $isActive;
     }
 
 

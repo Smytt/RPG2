@@ -1,10 +1,51 @@
+{# @var res \AppBundle\Entity\BuildingCosts #}
+{# @var stock \AppBundle\Entity\Stock #}
+{# @var building \AppBundle\Entity\Building #}
+
+
 {% extends '::base.html.twig' %}
+
+{% block title %}{{ building.type.type }}: upgrade {% endblock %}
 
 {% block body %}
 
+    {% if building.level == 5 %}
+
+        <h1>Your level {{ building.level }} {{ building.type.type }} is already at its highest level.</h1>
+
+    {% else %}
+
+        {% if building.level == 0 %}
+            <h1>You want to construct a {{ building.type.type }}</h1>
+
+        {% else %}
+            <h1>You want to upgrade your level {{ building.level }} {{ building.type.type }} </h1>
+        {% endif %}
+
+        <p>The construction will take {{ upgradeTime }} seconds and will cost:</p>
+
+        <ul>
+            {% for res in building.type.cost %}
+                <li>{{ res.stockType.type }} - {{ res.requiredAmount * (building.level + 1) }}</li>
+            {% endfor %}
+        </ul>
+
+        <p>You have:</p>
+
+        <ul>
+            {% for stock in myStocks %}
+                <li>{{ stock.type.type }} - {{ stock.quantity }}</li>
+            {% endfor %}
+        </ul>
+
+        {% if hasSufficientFunds %}
+            <a href="{{ path('building_upgrade', {'id': building.id, 'confirm':'confirm'}) }}">DO IT!</a>
+        {% else %}
+            <p>You don't have enough resources yet.</p>
+        {% endif %}
+    {% endif %}
+
 {% endblock %}
 
-{% block title %}
 
-{% endblock %}
 

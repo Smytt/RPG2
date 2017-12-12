@@ -1,3 +1,4 @@
+{# @var battle \AppBundle\Entity\Battle #}
 {% extends '::base.html.twig' %}
 
 {% block title %}
@@ -5,6 +6,6 @@
 {% endblock %}
 
 {% block body %}
-
+Battle of {{ battle.aggressor.username }} against {{ battle.victim.username }}
 {% endblock %}
 

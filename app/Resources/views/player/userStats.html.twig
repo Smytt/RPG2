@@ -1,0 +1,17 @@
+{# @var user \AppBundle\Entity\User#}
+{# @var battle \AppBundle\Entity\Battle#}
+
+<p>Hello, {{ user.username }}.</p>
+{% if user.battlesAsAggressor|length != 0 %}
+    <p>You are currently attacking:</p>
+    {% for battle in user.battlesAsAggressor %}
+        {{ battle.victim.username }},
+    {% endfor %}
+{% endif %}
+{% if user.battlesAsVictim|length != 0 %}
+    <p>You are currently being attacked by:</p>
+    {% for battle in user.battlesAsVictim %}
+        {{ battle.aggressor.username }},
+    {% endfor %}
+{% endif %}
+<p></p>

@@ -21,11 +21,21 @@ class BuildingsController extends Controller
      */
     public function upgradeBuildingReview(int $id, string $confirm = null)
     {
+        /**
+         * @var User
+         */
+        $user = $this->getUser();
+
         $em = $this->getDoctrine()->getManager();
 
         $buildings = $this->getDoctrine()->getManager()
             ->getRepository(Building::class)->findBy(['id' => $id]);
         $building = $buildings[0];
+
+        if($building->getPlanet()->getUser()->getId() !== $user->getId()) {
+            $message = 'This building is not yours.';
+            return $this->render('generalError.html.twig', ['message' => $message]);
+        }
 
         if ($building->isUpdating()) {
             return $this->render('player/upgradeConfirm.html.twig',

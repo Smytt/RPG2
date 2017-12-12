@@ -1,7 +1,19 @@
 {% extends '::base.html.twig' %}
 
-{% block body %}
+{# @var building \AppBundle\Entity\Building #}
 
+{% block body %}
+    {% if building.level > 0 %}
+        <h1>Your {{ building.type.type }} is upgrading to level {{ building.level + 1 }}.</h1>
+    {% else %}
+        <h1>Your {{ building.type.type }} is being constructed.</h1>
+    {% endif %}
+    <p>The process will finish in {{ timeLeft.h }} hours, {{ timeLeft.i }} minutes and {{ timeLeft.s }}</p>
+    <ul>
+        {% for stock in building.planet.stocks %}
+            <li>{{ stock.type.type }} - {{ stock.quantity }}</li>
+        {% endfor %}
+    </ul>
 {% endblock %}
 
 {% block title %}

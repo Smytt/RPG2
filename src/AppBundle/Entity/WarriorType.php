@@ -23,6 +23,24 @@ class WarriorType
     private $id;
 
     /**
+     * @var int
+     * @ORM\Column(name="attack", type="integer")
+     */
+    private $attack;
+
+    /**
+     * @var int
+     * @ORM\Column(name="defencece", type="integer")
+     */
+    private $defence;
+
+    /**
+     * @var int
+     * @ORM\Column(name="health", type="integer")
+     */
+    private $health;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="type", type="string", length=255, unique=true)
@@ -151,6 +169,53 @@ class WarriorType
         $this->startWith = $startWith;
     }
 
+    /**
+     * @return int
+     */
+    public function getAttack(): int
+    {
+        return $this->attack;
+    }
+
+    /**
+     * @param int $attack
+     */
+    public function setAttack(int $attack): void
+    {
+        $this->attack = $attack;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDefence(): int
+    {
+        return $this->defence;
+    }
+
+    /**
+     * @param int $defence
+     */
+    public function setDefence(int $defence): void
+    {
+        $this->defence = $defence;
+    }
+
+    /**
+     * @return int
+     */
+    public function getHealth(): int
+    {
+        return $this->health;
+    }
+
+    /**
+     * @param int $health
+     */
+    public function setHealth(int $health): void
+    {
+        $this->health = $health;
+    }
 
 
 

@@ -1,0 +1,20 @@
+{% extends "::base.html.twig" %}
+
+{% block title %}Attack {{ victim.username }}{% endblock %}
+
+{% block body %}
+    <h1>{{ aggressor.username }},</h1>
+    <h2>choose troops to send on an offensive expedition against {{ victim.username }}</h2>
+
+    <p>{{ victim.username }} owns a planet named {{ victim.planet.name }}, located at:</p>
+    <h1>{{ victim.planet.coordinateX }} x {{ victim.planet.coordinateY }}</h1>
+
+    {% if victim.planet.coordinateTime > aggressor.planet.coordinateTime %}
+        {% set time = 'future' %}
+    {% else %}
+        {% set time = 'past' %}
+    {% endif %}
+    <p>You have to go {{ (victim.planet.coordinateTime - aggressor.planet.coordinateTime)|abs }} years in the {{ time }}</p>
+
+    {{ form(form) }}
+{% endblock %}

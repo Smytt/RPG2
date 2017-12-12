@@ -23,10 +23,7 @@ class PlayerController extends Controller
         /**
          * @var User
          */
-        $test = $this->getUser();
-
-        $user = $this->getDoctrine()->getRepository(User::class)->find(4);
-
-        return $this->render('player/dashboard.html.twig', ['user' => $test]);
+        $user = $this->getUser();
+        return $this->render('player/dashboard.html.twig', ['user' => $user]);
     }
 }

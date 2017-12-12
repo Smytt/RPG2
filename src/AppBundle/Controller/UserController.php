@@ -58,7 +58,7 @@ class UserController extends Controller
             }
             $em->flush();
 
-            return $this->redirectToRoute('all_users');
+            return $this->redirectToRoute('login');
         }
 
         return $this->render('game/register.html.twig', ['form' => $form->createView()]);

@@ -1,0 +1,45 @@
+{# @var building \AppBundle\Entity\Building #}
+{# @var stock \AppBundle\Entity\Stock #}
+{# @var warrior \AppBundle\Entity\Warrior #}
+
+{% extends "::base.html.twig" %}
+
+{% block title %}Your dashboard{% endblock %}
+
+{% block body %}
+
+<h1>{{ user.username }}, this is your dashboard:</h1>
+
+<p>Planet name: {{ user.planet.name }}</p>
+<p>Planet position: {{ user.planet.coordinateX }}, {{ user.planet.coordinateY }}. Planet time-coordinates:
+    year {{ user.planet.coordinateTime }}</p>
+
+<p>Your buildings:</p>
+<ul>
+    {% for building in user.planet.buildings %}
+        <li>{{ building.type.type }}; level {{ building.level }} Currently updating:
+            {% if building.updating %}
+            YES
+        {% else %}
+            NO
+            {% endif %};
+            <a href="{{ path('building_upgrade', {'id': building.id }) }}">UPGRADE</a>
+        </li>
+    {% endfor %}
+</ul>
+
+<ul>
+    {% for stock in user.planet.stocks %}
+        <li>{{ stock.type.type }} - {{ stock.quantity }}
+        </li>
+    {% endfor %}
+</ul>
+
+<ul>
+    {% for warrior in user.planet.warriors %}
+        <li>{{ warrior.type.type }} - {{ warrior.quantity }}
+        </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}

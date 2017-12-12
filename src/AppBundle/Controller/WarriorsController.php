@@ -11,6 +11,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,20 +28,30 @@ class WarriorsController extends Controller
      * @param string $username
      * @return Response
      */
-    public function attackUser(Request $request, $username)
+    public function attackUserAction(Request $request, $username)
     {
-        $users = $this->getDoctrine()->getRepository(User::class)->findBy(['id' => 4]);
-        $victims = $this->getDoctrine()->getRepository(User::class)->findBy(['username' => $username]);
+        /**
+         * @var User
+         */
+        $aggressor = $this->getUser();
+        $victim = $this->getDoctrine()->getRepository(User::class)->findOneBy(['username' => $username]);
 
-        if (count($victims) === 0) {
-            //TODO no such user + return
+        if (!$victim === null) {
+            $message = "The user you are trying to attack doesn't exist";
+            return $this->render('generalError.html.twig', ['message' => $message]);
         }
 
-        $victim = $victims[0];
-        $aggressor = $users[0];
-        $battleExists = $this->getDoctrine()->getRepository(Battle::class)
-            ->findBy(['aggressor' => $aggressor, 'victim' => $victim]);
+        if ($victim->getId() === $aggressor->getId()) {
+            $message = "Don't attack yourself...";
+            return $this->render('generalError.html.twig', ['message' => $message]);
+        }
 
+        $battle = $this->getDoctrine()->getRepository(Battle::class)
+            ->findOneBy(['aggressor' => $aggressor, 'victim' => $victim, 'isActive' => 1]);
+
+        if ($battle) {
+            return $this->redirectToRoute('battle_resume', ['id' => $battle->getId()]);
+        }
 
         $distance = $this->findDistance($victim, $aggressor);
         $timeDistance = $this->findTimeDistance($victim, $aggressor);
@@ -71,20 +82,23 @@ class WarriorsController extends Controller
      */
     public function battleResume(int $id)
     {
-        //TODO check if logged user is aggressor or victim
+        $user = $this->getUser();
 
         $battles = $this->getDoctrine()->getRepository(Battle::class)->findBy(['id' => $id]);
         $battle = $battles[0];
 
+        if ($battle->getAggressor() !== $user && $battle->getVictim() != $user) {
+            $message = "This battle is not yours.";
+            return $this->render('generalError.html.twig', ['message' => $message]);
+        }
+
         return $this->render('battle/battle.html.twig', ['battle' => $battle]);
     }
 
-    private function makeBattle(User $aggressor, User $victim, $distance, $timeDistance, $timeInEachDirection, $form)
+    private function makeBattle(User $aggressor, User $victim, $distance, $timeDistance, $timeInEachDirection, FormInterface $form)
     {
         $em = $this->getDoctrine()->getManager();
-        $battle = new Battle($aggressor, $victim);
-        $battle->setBattleHappen($battle->getBattleDeclare()->add(new \DateInterval("P0DT{$timeInEachDirection}S")));
-        $battle->setReturnDue($battle->getBattleHappen()->add(new \DateInterval("P0DT{$timeInEachDirection}S")));
+        $battle = new Battle($aggressor, $victim, $timeInEachDirection);
 
         //subtract cost of travel
         foreach ($aggressor->getPlanet()->getStocks() as $stock) {
@@ -107,10 +121,41 @@ class WarriorsController extends Controller
 
         $em->persist($battle);
         $em->persist($aggressor);
+
         $em->flush();
+        $this->battleCron($battle, $timeInEachDirection);
 
         return $this->redirectToRoute('battle_resume', ['id' => $battle->getId()]);
     }
+
+    private function battleCron(Battle $battle, $timeInEachDirection)
+    {
+        $user = $this->container->getParameter('database_user');
+        $pass = $this->container->getParameter('database_password');
+        $db = $this->container->getParameter('database_name');
+
+        $templateSQLContent = file_get_contents('c:/Temp/template/battleProgress.sql');
+        $fileSQL = 'battle' . $battle->getId() . '.sql';
+        $generatedSQLFile = strtr($templateSQLContent, [
+            '{battleEvent}' => 'battleEvent' . $battle->getId(),
+            '{timeInEachDirection}' => $timeInEachDirection,
+            '{victimId}' => $battle->getVictim()->getId(),
+            '{aggressorId}' => $battle->getAggressor()->getId(),
+            '{battleId}' => $battle->getId(),
+            '{returnEvent}' => 'returnEvent' . $battle->getId(),
+            '{totalTime}' => $timeInEachDirection * 2,
+            '{planetId}' => $battle->getAggressor()->getPlanet()->getId(),
+
+        ]);
+        $tempFile = fopen("c:/Temp/" . $fileSQL, 'w');
+        fwrite($tempFile, $generatedSQLFile);
+        fclose($tempFile);
+
+        $query = "mysql --user={$user} --password={$pass} {$db} < c:/Temp/{$fileSQL}";
+        exec($query);
+        unlink("c:/Temp/{$fileSQL}");
+    }
+
     private function createFormChooseWarriors($chosenWarriors, User $aggressor, User $victim)
     {
         $warriorTypes = $this->getDoctrine()->getRepository(WarriorType::class)->findAll();
