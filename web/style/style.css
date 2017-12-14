@@ -1,0 +1,244 @@
+@import url('https://fonts.googleapis.com/css?family=Raleway');
+
+body {
+    padding: 0;
+    margin: 0;
+    font-family: Raleway;
+    background: url("../assets/bg2.jpg") center top no-repeat;
+    background-color: #000403;
+    background-size: 100%;
+    color: #fff;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.container {
+    padding-top: 20px;
+    min-height: 100%;
+    width: 1200px;
+    margin: auto;
+}
+
+.logo {
+    float: left;
+    display: inline-block;
+    margin: 0;
+    margin-top: 10px;
+}
+
+nav {
+    margin-bottom: 20px;
+    display: inline-block;
+    float: right;
+}
+
+nav:after {
+    content: '';
+
+    display: block;
+    clear: both;
+}
+
+nav ul {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+nav li {
+    display: inline-block;
+    margin: 20px;
+}
+
+nav a, .one-user .button a {
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 10px 15px;
+    background: white;
+    border-radius: 30px;
+    color: purple;
+    border: 1px solid white;
+}
+
+nav a:hover, .one-user .button a:hover {
+    background: none;
+    color: #fff;
+}
+
+.hero {
+    height: 310px;
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+.hero > div {
+    width: 30%;
+}
+
+.hero span {
+    display: block;
+}
+
+.hero .username {
+    text-align: right;
+}
+
+.hero .type {
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.hero .name {
+    font-size: 52px;
+}
+
+.hero img {
+    border-radius: 50%;
+    border: 5px solid white;
+}
+
+.hero .username, .hero .planetname {
+    margin-top: 110px;
+}
+
+.hero .userplanet {
+    width: 150px;
+    height: auto;
+    position: relative;
+    top: -235px;
+    left: 200px;
+}
+
+main {
+    display: block;
+    clear: both;
+}
+
+section {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+section img.main {
+    display: block;
+    margin: auto;
+    width: 60%;
+    height: auto;
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+section > div {
+    border-radius: 20px;
+    padding: 20px 0;
+    text-align: center;
+    background-color: rgba(0,0,0, 0.4);
+}
+
+section > div h2, section > div h3 {
+    font-size: 16px;
+    margin: 0 auto;
+    padding: 5px 10px;
+    display: inline-block;
+    border-radius: 10px;
+    background: purple;
+    color: white;
+    position: relative;
+    top: -20px;
+    font-weight: normal;
+}
+
+.details img {
+    border-radius: 50%;
+    border: 1px solid white;
+    display: block;
+    margin: auto;
+    width: 40px;
+    height: auto
+}
+
+section > div .button {
+    display: block;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 10px 15px;
+    background: white;
+    border-radius: 30px;
+    color: purple;
+    border: 1px solid white;
+    width: calc(100% - 40px);
+    box-sizing: border-box;
+    margin: 20px auto 0 auto;
+}
+
+section.stocks img {
+    width: 30%;
+}
+
+section.stocks h2, section.stocks h3 {
+    position: static;
+    margin-top:  20px;
+}
+
+.one-user {
+    clear: both;
+    height: 64px;
+    padding: 6px;
+    box-sizing: border-box;
+    line-height: 52px;
+}
+
+.one-user:hover {
+    background-color: rgba(255,255,255,0.3);
+    border-radius: 35px;
+}
+
+.one-user img {
+    width: 48px;
+    height: 48px;
+    border: 2px solid white;
+    border-radius: 50%;
+}
+
+.one-user span {
+    margin-left: 10px;
+    display: inline-block;
+    width: 200px;
+    font-size: 22px;
+    vertical-align: top;
+}
+
+.one-user .smaller {
+    font-size: 14px;
+}
+.one-user .button {
+    text-align: right;
+}
+
+.one-user .button a {
+    position: relative;
+    top: -4px;
+}
+
+.attack-big a {
+    text-align: center;
+    display: block;
+    margin: auto;
+    width: 300px;
+    height: 50px;
+    background: white;
+    border-radius: 30px;
+    color: purple;
+    line-height: 50px;
+    font-size: 25px;
+}
