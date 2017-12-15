@@ -1,10 +1,31 @@
 {% extends '::base.html.twig' %}
 
+{% block title %}
+{{ user.username }}: Profile
+{% endblock %}
+
 {% block body %}
 
+    <div class="hero">
+        <div class="username">
+            <span class="type">Profile of</span>
+            <span class="name">{{ user.username }}</span>
+        </div>
+        <div class="avatar">
+            <img class="useravatar" src="{{ asset('assets/players/'~ (user.id % 31) ~'.jpg') }}" alt="">
+            <img class="userplanet" src="{{ asset('assets/planets/'~ (user.id % 15) ~'.jpg') }}" alt="">
+        </div>
+        <div class="planetname">
+            <span class="type">Their planet is</span>
+            <span class="name">{{ user.planet.name }}</span>
+            <span class="type">LON: {{ user.planet.coordinateX }}, LAT: {{ user.planet.coordinateY }}
+                , YEAR: {{ user.planet.coordinateTime }}</span>
+
+        </div>
+    </div>
+    <div class="attack-big">
+        <a href="{{ path('attack_user', {'username': user.username}) }}">ATTACK {{ user.username }}</a>
+    </div>
 {% endblock %}
 
-{% block title %}
-
-{% endblock %}
 

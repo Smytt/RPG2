@@ -1,20 +1,71 @@
+{# @var building \AppBundle\Entity\Building #}
+{# @var stock \AppBundle\Entity\Stock #}
+{# @var warrior \AppBundle\Entity\Warrior #}
+{# @var user \AppBundle\Entity\User #}
+{# @var req \AppBundle\Entity\WarriorRequirements #}
+{# @var cost \AppBundle\Entity\WarriorCosts #}
+
 {% extends "::base.html.twig" %}
 
 {% block title %}Attack {{ victim.username }}{% endblock %}
 
 {% block body %}
-    <h1>{{ aggressor.username }},</h1>
-    <h2>choose troops to send on an offensive expedition against {{ victim.username }}</h2>
+    <div class="vs-block">
+        <div class="attacker">
+            <img class="useravatar" src="{{ asset('assets/players/'~ (app.user.id % 31) ~'.jpg') }}" alt="">
+            <img class="userplanet" src="{{ asset('assets/planets/'~ (app.user.id % 15) ~'.jpg') }}" alt="">
+            <span>{{ app.user.username }}</span>
+        </div>
+        <div class="vs">
+            vs
+        </div>
+        <div class="victim">
+            <img class="useravatar" src="{{ asset('assets/players/'~ (victim.id % 31) ~'.jpg') }}" alt="">
+            <img class="userplanet" src="{{ asset('assets/planets/'~ (victim.id % 15) ~'.jpg') }}" alt="">
+            <span>{{ victim.username }}</span>
+        </div>
+    </div>
 
-    <p>{{ victim.username }} owns a planet named {{ victim.planet.name }}, located at:</p>
-    <h1>{{ victim.planet.coordinateX }} x {{ victim.planet.coordinateY }}</h1>
+    <div class="centered">
+        <h1>From <span>{{ app.user.planet.name }}</span> to <span>{{ victim.planet.name }}</span></h1>
+        <section class="stocks remove-bg">
+            {% for stock in app.user.planet.stocks %}
+                {% if stock.type.costPerYearTravel == 0 %}
+                    <div style="width: calc({{ (100 /  app.user.planet.stocks|length)|round(0,'floor') }}% - 20px);
+                    {{ stock.quantity < (stock.type.costPerBlockTravel * distance * 2) ? 'background-color: rgba(224, 32, 0, 0.6)':'' }}">
+                        <img class="main" src="{{ asset('assets/stocks/' ~ stock.type.id ~ '.jpg') }}" alt="">
+                        <p>You have:</p>
+                        <p class="right">You need:</p>
+                        <h3>{{ stock.quantity }}</h3>
+                        <h3 class="right">{{ (stock.type.costPerBlockTravel * distance * 2)|round(0, 'ceil') }}</h3>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </section>
+        <h1>From
+            <span>year {{ app.user.planet.coordinateTime }}</span> {{ app.user.planet.coordinateTime > victim.planet.coordinateTime ? 'back':'forward' }}
+            in time to <span>year {{ victim.planet.coordinateTime }}</span></h1>
+        <section class="stocks remove-bg">
+            {% for stock in app.user.planet.stocks %}
+                {% if stock.type.costPerBlockTravel == 0 %}
+                    <div style="width: calc({{ (100 /  app.user.planet.stocks|length)|round(0,'floor') }}% - 20px);
+                    {{ stock.quantity < (stock.type.costPerYearTravel * timeDistance * 2) ? 'background-color: rgba(224, 32, 0, 0.6)':'' }}">
+                        <img class="main" src="{{ asset('assets/stocks/' ~ stock.type.id ~ '.jpg') }}" alt="">
+                        <p>You have:</p>
+                        <p class="right">You need:</p>
+                        <h3>{{ stock.quantity }}</h3>
+                        <h3 class="right">{{ (stock.type.costPerYearTravel * timeDistance * 2)|round(0, 'ceil') }}</h3>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </section>
 
-    {% if victim.planet.coordinateTime > aggressor.planet.coordinateTime %}
-        {% set time = 'future' %}
-    {% else %}
-        {% set time = 'past' %}
-    {% endif %}
-    <p>You have to go {{ (victim.planet.coordinateTime - aggressor.planet.coordinateTime)|abs }} years in the {{ time }}</p>
 
-    {{ form(form) }}
+        {% if canMakeTrip %}
+            {{ form(form) }}
+        {% else %}
+            <h2>You can't make the trip - you need more resources</h2>
+        {% endif %}
+    </div>
+
 {% endblock %}

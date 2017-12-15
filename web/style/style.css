@@ -55,7 +55,7 @@ nav li {
     margin: 20px;
 }
 
-nav a, .one-user .button a {
+nav a, .one-user .button a, h1 a {
     text-transform: uppercase;
     font-size: 12px;
     font-weight: bold;
@@ -69,6 +69,10 @@ nav a, .one-user .button a {
 nav a:hover, .one-user .button a:hover {
     background: none;
     color: #fff;
+}
+
+h1 img {
+    margin-top: 5px;
 }
 
 .hero {
@@ -141,7 +145,7 @@ section > div {
     border-radius: 20px;
     padding: 20px 0;
     text-align: center;
-    background-color: rgba(0,0,0, 0.4);
+    background-color: rgba(0, 0, 0, 0.4);
 }
 
 section > div h2, section > div h3 {
@@ -187,7 +191,7 @@ section.stocks img {
 
 section.stocks h2, section.stocks h3 {
     position: static;
-    margin-top:  20px;
+    margin-top: 20px;
 }
 
 .one-user {
@@ -199,7 +203,7 @@ section.stocks h2, section.stocks h3 {
 }
 
 .one-user:hover {
-    background-color: rgba(255,255,255,0.3);
+    background-color: rgba(255, 255, 255, 0.3);
     border-radius: 35px;
 }
 
@@ -212,8 +216,9 @@ section.stocks h2, section.stocks h3 {
 
 .one-user span {
     margin-left: 10px;
+    margin-right: 10px;
     display: inline-block;
-    width: 200px;
+    width: 191px;
     font-size: 22px;
     vertical-align: top;
 }
@@ -221,6 +226,7 @@ section.stocks h2, section.stocks h3 {
 .one-user .smaller {
     font-size: 14px;
 }
+
 .one-user .button {
     text-align: right;
 }
@@ -242,3 +248,191 @@ section.stocks h2, section.stocks h3 {
     line-height: 50px;
     font-size: 25px;
 }
+
+form {
+    width: 400px;
+    display: block;
+    margin: 0 auto;
+}
+
+label, input, button, select {
+    display: block;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+input, button, select {
+    margin-bottom: 20px;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    height: 40px;
+    padding: 0 10px;
+    box-sizing: border-box;
+}
+
+button {
+    margin: 0;
+    background: purple;
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 16px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+h1 a {
+    margin-left: 20px;
+    position: relative;
+    top: -5px;
+}
+
+.warriors ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.warriors .info {
+
+}
+
+.vs-block {
+    display: flex;
+    justify-content: space-between;
+}
+
+.vs-block > div {
+    width: 45%;
+}
+
+.vs-block > .vs {
+    width: 10%;
+    font-size: 80px;
+    text-align: center;
+    line-height: 200px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.vs-block > div span {
+    position: relative;
+    display: block;
+    text-align: left;
+    font-size: 36px;
+    float: left;
+    line-height: 200px;
+}
+
+.vs-block > div img {
+    border-radius: 50%;
+    border: 5px solid white;
+    display: block;
+    float: left;
+}
+
+.vs-block > div.victim img {
+    float: right;
+}
+
+.vs-block .useravatar {
+    width: 200px;
+    height: auto;
+}
+
+.vs-block .userplanet {
+    width: 100px;
+    height: auto;
+    position: relative;
+    top: 50px;
+}
+
+.attacker .userplanet {
+    left: -75px;
+}
+
+.victim .userplanet {
+    left: 75px;
+}
+
+.attacker span {
+    left: -60px !important;
+
+}
+
+.victim span {
+    left: 60px !important;
+    float: right !important;
+    text-align: right;
+}
+
+.remove-bg {
+    justify-content: center;
+}
+
+.remove-bg > div {
+    margin: 0 10px;
+}
+
+.centered {
+    text-align: center;
+}
+.centered label {
+    text-align: left;
+}
+.centered h1 {
+    text-align: center;
+}
+
+.centered h1 span {
+    padding: 5px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+.centered p {
+    float: left;
+    margin: 0;
+}
+
+.centered .right {
+    float: right;
+}
+
+p.right + h3 {
+    clear: both;
+}
+
+.centered h3 {
+    margin-top: 0 !important;
+    float: left;
+}
+
+.centered .right {
+    float: right;
+}
+
+.centered section > div {
+    padding: 10px 20px;
+    box-sizing: border-box;
+}
+
+img.round {
+    border: 5px solid white;
+    border-radius: 50%;
+}
+
+.battles {
+    display: flex;
+    justify-content: space-between;
+}
+
+.battles > div {
+    width: 49%;
+}
+.defending {
+    text-align: right;
+}
+
+a.one-user {
+    display: block;}

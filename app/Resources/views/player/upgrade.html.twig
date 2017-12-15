@@ -9,42 +9,51 @@
 
 {% block body %}
 
-    {% if building.level == 5 %}
+    <div class="centered">
 
-        <h1>Your level {{ building.level }} {{ building.type.type }} is already at its highest level.</h1>
+        <img class="round" src="{{ asset('assets/buildings/'~ building.type.id ~'.jpg') }}" alt="">
 
-    {% else %}
+        {% if building.level == 5 %}
 
-        {% if building.level == 0 %}
-            <h1>You want to construct a {{ building.type.type }}</h1>
+            <h1>Your level {{ building.level }} {{ building.type.type }} is already at its highest level.</h1>
 
         {% else %}
-            <h1>You want to upgrade your level {{ building.level }} {{ building.type.type }} </h1>
+
+            {% if building.level == 0 %}
+                <h1>You want to construct a {{ building.type.type }}</h1>
+
+            {% else %}
+                <h1>You want to upgrade your level {{ building.level }} {{ building.type.type }} </h1>
+            {% endif %}
+
+            <h2>The construction will take {{ upgradeTime }} seconds and will cost:</h2>
+
+            <section class="stocks remove-bg">
+                {% for res in building.type.cost %}
+                    {% for stock in building.planet.stocks %}
+                        {% if res.stockType.id == stock.type.id %}
+                            <div style="width: calc({{ (100 /  building.type.cost|length)|round(0,'floor') }}% - 20px);
+                            {{ stock.quantity <  res.requiredAmount * (building.level + 1) ? 'background-color: rgba(224, 32, 0, 0.6)':'' }}">
+                                <img class="main" src="{{ asset('assets/stocks/' ~ stock.type.id ~ '.jpg') }}" alt="">
+                                <p>You have:</p>
+                                <p class="right">You need:</p>
+                                <h3>{{ stock.quantity }}</h3>
+                                <h3 class="right">{{ res.requiredAmount * (building.level + 1) }}</h3>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% endfor %}
+            </section>
+
+            {% if hasSufficientFunds %}
+                <div class="attack-big">
+                    <a href="{{ path('building_upgrade', {'id': building.id, 'confirm':'confirm'}) }}">DO IT</a>
+                </div>
+            {% else %}
+                <h2>You don't have enough resources yet.</h2>
+            {% endif %}
         {% endif %}
-
-        <p>The construction will take {{ upgradeTime }} seconds and will cost:</p>
-
-        <ul>
-            {% for res in building.type.cost %}
-                <li>{{ res.stockType.type }} - {{ res.requiredAmount * (building.level + 1) }}</li>
-            {% endfor %}
-        </ul>
-
-        <p>You have:</p>
-
-        <ul>
-            {% for stock in myStocks %}
-                <li>{{ stock.type.type }} - {{ stock.quantity }}</li>
-            {% endfor %}
-        </ul>
-
-        {% if hasSufficientFunds %}
-            <a href="{{ path('building_upgrade', {'id': building.id, 'confirm':'confirm'}) }}">DO IT!</a>
-        {% else %}
-            <p>You don't have enough resources yet.</p>
-        {% endif %}
-    {% endif %}
-
+    </div>
 {% endblock %}
 
 

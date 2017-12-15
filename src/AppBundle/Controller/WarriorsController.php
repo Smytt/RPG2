@@ -4,10 +4,20 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Battle;
 use AppBundle\Entity\BattleWarrior;
+use AppBundle\Entity\Building;
+use AppBundle\Entity\Planet;
+use AppBundle\Entity\Stock;
 use AppBundle\Entity\User;
+use AppBundle\Entity\Warrior;
+use AppBundle\Entity\WarriorCosts;
+use AppBundle\Entity\WarriorRequirements;
 use AppBundle\Entity\WarriorType;
 use AppBundle\Repository\BattleRepository;
+use Doctrine\Common\Collections\Collection;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -57,8 +67,7 @@ class WarriorsController extends Controller
         $timeDistance = $this->findTimeDistance($victim, $aggressor);
         $timeInEachDirection = ceil($distance * self::TIME_PER_BLOCK + $timeDistance * self::TIME_PER_YEAR);
 
-        $chosenWarriors = [];
-        $form = $this->createFormChooseWarriors($chosenWarriors, $aggressor, $victim);
+        $form = $this->createFormChooseWarriors($aggressor);
         $form->handleRequest($request);
 
         $canMakeTrip = $this->canMakeTrip($aggressor, $distance, $timeDistance);
@@ -68,8 +77,11 @@ class WarriorsController extends Controller
         }
 
         return $this->render('battle/attack.html.twig', [
+            'canMakeTrip' => $canMakeTrip,
             'victim' => $victim,
             'aggressor' => $aggressor,
+            'distance' => $distance,
+            'timeDistance' => $timeDistance,
             'time' => $timeInEachDirection,
             'form' => $form->createView()
         ]);
@@ -80,7 +92,7 @@ class WarriorsController extends Controller
      * @param int $id
      * @return Response
      */
-    public function battleResume(int $id)
+    public function battleResumeAction(int $id)
     {
         $user = $this->getUser();
 
@@ -91,8 +103,57 @@ class WarriorsController extends Controller
             $message = "This battle is not yours.";
             return $this->render('generalError.html.twig', ['message' => $message]);
         }
+        $now = new \DateTime();
+        $timeLeft = $now->diff($battle->getBattleHappen());
+        $timeToReturn = $now->diff($battle->getReturnDue());
+        return $this->render('battle/battle.html.twig', ['battle' => $battle, 'timeLeft' => $timeLeft, 'timeToReturn' => $timeToReturn]);
+    }
 
-        return $this->render('battle/battle.html.twig', ['battle' => $battle]);
+    /**
+     * @Route("/purchase/", name="purchase_warriors")
+     * @param Request $request
+     * @return Response
+     */
+    public function purchaseWarriorsAction(Request $request)
+    {
+        $chosenWarriors = [];
+        $form = $this->createFormBuilder($chosenWarriors);
+        $form
+            ->add('quantity', NumberType::class)
+            ->add('warriorType', EntityType::class, [
+                'class' => WarriorType::class,
+                'choice_label' => 'type'
+            ])
+            ->add('save', SubmitType::class, ['label' => 'Purchase']);
+        $form = $form->getForm();
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $canPurchase = $this->canPurchase($form);
+            $requirementsMet = $this->requirementsMet($form);
+            if (!$requirementsMet) return $this->render('player/purchase.html.twig', [
+                'form' => $form->createView(),
+                'data' => $form->getData(),
+                'formSubmitted' => $form->isSubmitted() && $form->isValid(),
+                'requirementsMet' => 0
+            ]);
+            if (!$canPurchase) return $this->render('player/purchase.html.twig', [
+                'form' => $form->createView(),
+                'data' => $form->getData(),
+                'max' => $this->getMax($form),
+                'formSubmitted' => $form->isSubmitted() && $form->isValid(),
+                'canPurchase' => 0
+            ]);
+
+            $this->makePurchase($form);
+
+        }
+        return $this->render('player/purchase.html.twig', [
+            'form' => $form->createView(),
+            'data' => $form->getData(),
+            'formSubmitted' => $form->isSubmitted() && $form->isValid()
+        ]);
+
     }
 
     private function makeBattle(User $aggressor, User $victim, $distance, $timeDistance, $timeInEachDirection, FormInterface $form)
@@ -103,8 +164,8 @@ class WarriorsController extends Controller
         //subtract cost of travel
         foreach ($aggressor->getPlanet()->getStocks() as $stock) {
             $stock->setQuantity($stock->getQuantity() -
-                $stock->getType()->getCostPerBlockTravel() * 2 * $distance -
-                $stock->getType()->getCostPerYearTravel() * 2 * $timeDistance);
+                 ceil($stock->getType()->getCostPerBlockTravel() * 2 * $distance) -
+                ceil($stock->getType()->getCostPerYearTravel() * 2 * $timeDistance));
         }
 
         //subtract warriors of aggressor and insert into battlewarriors entity
@@ -156,8 +217,9 @@ class WarriorsController extends Controller
         unlink("c:/Temp/{$fileSQL}");
     }
 
-    private function createFormChooseWarriors($chosenWarriors, User $aggressor, User $victim)
+    private function createFormChooseWarriors(User $aggressor)
     {
+        $chosenWarriors = [];
         $warriorTypes = $this->getDoctrine()->getRepository(WarriorType::class)->findAll();
         $form = $this->createFormBuilder($chosenWarriors);
         foreach ($warriorTypes as $type) {
@@ -171,17 +233,17 @@ class WarriorsController extends Controller
                 'constraints' => new Range([
                     'min' => 0,
                     'max' => $maxQuantity,
-                    'minMessage' => 'min error message',
-                    'maxMessage' => "you only have $maxQuantity " . $type->getType()
+                    'minMessage' => 'Please enter only positive quantities',
+                    'maxMessage' => "You only have $maxQuantity " . $type->getType()
                 ]),
-                'label' => $type->getType(),
+                'label' => $type->getType() . ' - max ' . $maxQuantity,
                 'attr' => [
                     'min' => 0,
                     'max' => $maxQuantity
                 ],
             ]);
         }
-        $form->add('save', SubmitType::class, ['label' => 'Send to battle!']);
+        $form->add('save', SubmitType::class, ['label' => 'Send to battle']);
         return $form->getForm();
     }
 
@@ -191,7 +253,7 @@ class WarriorsController extends Controller
         $x2 = $aggressor->getPlanet()->getCoordinateX();
         $y1 = $victim->getPlanet()->getCoordinateY();
         $y2 = $aggressor->getPlanet()->getCoordinateY();
-        return sqrt(pow($x1 - $x2, 2) + pow($y1 - $y2, 2));
+        return floor(sqrt(pow($x1 - $x2, 2) + pow($y1 - $y2, 2)));
     }
 
     private function findTimeDistance(User $victim, User $aggressor)
@@ -204,12 +266,121 @@ class WarriorsController extends Controller
     {
         $canMakeTrip = true;
         foreach ($aggressor->getPlanet()->getStocks() as $stock) {
-            if ($stock->getQuantity() < $stock->getType()->getCostPerBlockTravel() * 2 * $distance
-                || $stock->getQuantity() < $stock->getType()->getCostPerYearTravel() * 2 * $timeDistance) {
+            if ($stock->getQuantity() < ceil($stock->getType()->getCostPerBlockTravel() * 2 * $distance)
+                || $stock->getQuantity() < ceil($stock->getType()->getCostPerYearTravel() * 2 * $timeDistance)) {
                 $canMakeTrip = false;
             }
         }
 
         return $canMakeTrip;
+    }
+
+    private function canPurchase(FormInterface $form)
+    {
+        /**
+         * @var Stock[]
+         */
+        $stocks = $this->getUser()->getPlanet()->getStocks();
+        $warriorType = $this->getDoctrine()
+            ->getRepository(WarriorType::class)
+            ->find($form->getData()['warriorType']);
+        $warriorCosts = $this->getDoctrine()
+            ->getRepository(WarriorCosts::class)
+            ->findBy(['warriorType' => $warriorType]);
+
+        $desiredQuantity = intval($form->getData()['quantity']);
+
+        foreach ($warriorCosts as $cost) {
+            foreach ($stocks as $stock) {
+                if ($cost->getStockType()->getId() === $stock->getType()->getId()) {
+                    if ($cost->getRequiredAmount() * $desiredQuantity > $stock->getQuantity()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private function requirementsMet(FormInterface $form)
+    {
+        /**
+         * @var Building[]
+         */
+        $buildings = $this->getUser()->getPlanet()->getBuildings();
+        $warriorType = $this->getDoctrine()
+            ->getRepository(WarriorType::class)
+            ->find($form->getData()['warriorType']);
+        $warriorRequirements = $this->getDoctrine()
+            ->getRepository(WarriorRequirements::class)
+            ->findBy(['warriorType' => $warriorType]);
+
+        foreach ($warriorRequirements as $requirement) {
+            foreach ($buildings as $building) {
+                if ($requirement->getBuildingType()->getId() === $building->getType()->getId()) {
+                    if ($requirement->getRequiredLevel() > $building->getLevel()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private function makePurchase(FormInterface $form)
+    {
+        /**
+         * @var User
+         */
+        $user = $this->getUser();
+
+        $em = $this->getDoctrine()->getManager();
+        $quantity = intval($form->getData()['quantity']);
+
+        $warrior = $this->getDoctrine()->getRepository(Warrior::class)
+            ->findOneBy([
+                'type' => $form->getData()['warriorType'],
+                'planet' => $user->getPlanet()
+            ]);
+
+        /**
+         * @var Stock[]
+         */
+        $stocks = $this->getDoctrine()->getRepository(Stock::class)
+            ->findBy(['planet' => $user->getPlanet()]);
+
+        foreach ($stocks as $stock) {
+            foreach ($warrior->getType()->getCost() as $cost) {
+                if ($stock->getType()->getId() === $cost->getStockType()->getId()) {
+                    $stock->setQuantity($stock->getQuantity() - $cost->getrequiredAmount() * $quantity);
+                    $em->persist($stock);
+                }
+            }
+        }
+        $warrior->setInQueue($warrior->getInQueue() + $quantity);
+        $em->persist($warrior);
+        $em->flush();
+    }
+
+    private function getMax(FormInterface $form)
+    {
+        $stocks = $this->getUser()->getPlanet()->getStocks();
+        $warriorType = $this->getDoctrine()
+            ->getRepository(WarriorType::class)
+            ->find($form->getData()['warriorType']);
+        $warriorCosts = $this->getDoctrine()
+            ->getRepository(WarriorCosts::class)
+            ->findBy(['warriorType' => $warriorType]);
+
+        $max = PHP_INT_MAX;
+        foreach ($warriorCosts as $cost) {
+            foreach ($stocks as $stock) {
+                if ($cost->getStockType()->getId() === $stock->getType()->getId()) {
+                    $curMax = $stock->getQuantity() / $cost->getRequiredAmount();
+                    if ($curMax < $max) $max = $curMax;
+                }
+            }
+        }
+        return floor($max);
     }
 }

@@ -1,45 +1,162 @@
 {# @var building \AppBundle\Entity\Building #}
 {# @var stock \AppBundle\Entity\Stock #}
 {# @var warrior \AppBundle\Entity\Warrior #}
-
+{# @var user \AppBundle\Entity\User #}
+{# @var req \AppBundle\Entity\WarriorRequirements #}
+{# @var cost \AppBundle\Entity\WarriorCosts #}
+{% set user = app.user %}
+{% set one = 0 %}
 {% extends "::base.html.twig" %}
 
 {% block title %}Your dashboard{% endblock %}
 
 {% block body %}
+    <div class="hero">
+        <div class="username">
+            <span class="type">You are</span>
+            <span class="name">{{ app.user.username }}</span>
+        </div>
+        <div class="avatar">
+            <img class="useravatar" src="{{ asset('assets/players/'~ (user.id % 31) ~'.jpg') }}" alt="">
+            <img class="userplanet" src="{{ asset('assets/planets/'~ (user.id % 15) ~'.jpg') }}" alt="">
+        </div>
+        <div class="planetname">
+            <span class="type">Your planet is</span>
+            <span class="name">{{ app.user.planet.name }}</span>
+            <span class="type">LON: {{ app.user.planet.coordinateX }}, LAT: {{ app.user.planet.coordinateY }}
+                , YEAR: {{ app.user.planet.coordinateTime }}</span>
 
-<h1>{{ user.username }}, this is your dashboard:</h1>
+        </div>
+    </div>
+    <div class="battles">
+        <div class="attacking">
+            <h3>Currently attacking</h3>
+            {% for battle in user.battlesAsAggressor %}
+                {% if battle.active %}
+                    <a class="one-user" href="{{ path('battle_resume', {'id': battle.id}) }}">
+                        <img src="{{ asset('assets/players/'~ (battle.victim.id % 31) ~'.jpg') }}" alt="">
+                        <span>{{ battle.victim.username }}</span>
+                    </a>
+                    {% set one = 1 %}
+                {% endif %}
+            {% else %}
+                Nobody
+            {% endfor %}
+            {% if one == 0 %}
+                Nobody
+            {% endif %}
+            {% set one = 0 %}
 
-<p>Planet name: {{ user.planet.name }}</p>
-<p>Planet position: {{ user.planet.coordinateX }}, {{ user.planet.coordinateY }}. Planet time-coordinates:
-    year {{ user.planet.coordinateTime }}</p>
+            <h3>Currently returning from battle with</h3>
+            {% for battle in user.battlesAsAggressor %}
+                {% if not battle.active %}
+                    {% if date() < date(battle.returnDue) %}
+                        <a class="one-user" href="{{ path('battle_resume', {'id': battle.id}) }}">
+                            <img src="{{ asset('assets/players/'~ (battle.victim.id % 31) ~'.jpg') }}" alt="">
+                            <span>{{ battle.victim.username }}</span>
+                        </a>
+                        {% set one = 1 %}
+                    {% endif %}
+                {% endif %}
+            {% else %}
+                Nobody
+            {% endfor %}
+            {% if one == 0 %}
+                Nobody
+            {% endif %}
+            {% set one = 0 %}
+        </div>
 
-<p>Your buildings:</p>
-<ul>
-    {% for building in user.planet.buildings %}
-        <li>{{ building.type.type }}; level {{ building.level }} Currently updating:
-            {% if building.updating %}
-            YES
-        {% else %}
-            NO
-            {% endif %};
-            <a href="{{ path('building_upgrade', {'id': building.id }) }}">UPGRADE</a>
-        </li>
-    {% endfor %}
-</ul>
+        <div class="defending">
+            <h3>Currently being attacked by</h3>
+            {% for battle in user.battlesAsVictim %}
+                {% if battle.active %}
+                    <div class="one-user" href="{{ path('battle_resume', {'id': battle.id}) }}">
+                        <img src="{{ asset('assets/players/'~ (battle.aggressor.id % 31) ~'.jpg') }}" alt="">
+                        <span>{{ user.username }}</span>
+                    </div>
+                    {% set one = 1 %}
+                {% endif %}
+            {% else %}
+                nodbody
+            {% endfor %}
+            {% if one == 1 %}
+                Nobody
+            {% endif %}
+        </div>
+    </div>
+    <h1>Resources</h1>
+    <section class="stocks">
 
-<ul>
-    {% for stock in user.planet.stocks %}
-        <li>{{ stock.type.type }} - {{ stock.quantity }}
-        </li>
-    {% endfor %}
-</ul>
+        {% for stock in user.planet.stocks %}
+            <div style="width: calc({{ (100 /  user.planet.stocks|length)|round(0,'floor') }}% - 20px);">
+                <img class="main" src="{{ asset('assets/stocks/' ~ stock.type.id ~ '.jpg') }}" alt="">
 
-<ul>
-    {% for warrior in user.planet.warriors %}
-        <li>{{ warrior.type.type }} - {{ warrior.quantity }}
-        </li>
-    {% endfor %}
-</ul>
+                <h2>{{ stock.type.type }}</h2>
+                <h3>{{ stock.quantity }}</h3>
+            </div>
+        {% endfor %}
+    </section>
+
+    <h1>Buildings</h1>
+    <section>
+        {% for building in user.planet.buildings %}
+            <div style="width: calc({{ (100 /  user.planet.buildings|length)|round(0,'floor') }}% - 20px);">
+                <img class="main" src="{{ asset('assets/buildings/' ~ building.type.id ~ '.jpg') }}" alt=""
+                        {% if building.level == 0 %}
+                            style="border-style: dotted; opacity: 0.4;"
+                        {% endif %}
+                >
+
+                <h2>{{ building.type.type }}</h2>
+                <h3>{{ building.level }}</h3>
+                <div class="details">
+                    <img src="{{ asset('assets/stocks/' ~ building.type.stockType.id ~ '.jpg') }}" alt="">
+                    Gives {{ building.type.incomePerMinute *  building.level }} every minute
+                </div>
+                {% if building.updating %}
+                    <a href="{{ path('building_upgrade', {'id': building.id}) }}" class="button">now upgrading
+                        ...</a>
+                {% elseif building.level == 0 %}
+                    <a href="{{ path('building_upgrade', {'id': building.id}) }}" class="button">build</a>
+                {% elseif building.level == 5 %}
+                    <span class="button" style="opacity: 0.5">top level</span>
+                {% else %}
+                    <a href="{{ path('building_upgrade', {'id': building.id}) }}" class="button">upgrade</a>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </section>
+
+    <h1>Warriors<a href="{{ path('purchase_warriors') }}">purchase more</a></h1>
+    <section class="warriors">
+        {% for warrior in user.planet.warriors %}
+            <div style="width: calc({{ (100 /  user.planet.warriors|length)|round(0,'floor') }}% - 20px);">
+                <img class="main" src="{{ asset('assets/warriors/' ~ warrior.type.id ~ '.jpg') }}" alt="">
+
+                <h2>{{ warrior.type.type }}</h2>
+                <h3>{{ warrior.quantity }} + {{ warrior.inQueue }}</h3>
+                <div class="info">
+                    <div>
+                        units per minute: {{ warrior.type.birthsPerMinute }}
+                    </div>
+                    <div>requires:
+                        <ul>
+                            {% for req in warrior.type.requirements %}
+                                <li>{{ req.buildingType.type }} - level {{ req.requiredLevel }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div>costs:
+                        <ul>
+                            {% for cost in warrior.type.cost %}
+                                <li>{{ cost.stockType.type }} - {{ cost.requiredAmount }} per unit</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </section>
 
 {% endblock %}

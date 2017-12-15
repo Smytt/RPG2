@@ -4,6 +4,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -27,6 +28,12 @@ class User implements UserInterface, \Serializable
 
     /**
      * @var string
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 25,
+     *      minMessage = "Enter at least {{ limit }} characters",
+     *      maxMessage = "Enter no more than {{ limit }} characters"
+     * )
      *
      * @ORM\Column(name="username", type="string", length=255, unique=true)
      */
@@ -34,10 +41,16 @@ class User implements UserInterface, \Serializable
 
     /**
      * @var string
+     * @Assert\Length(
+     *      min = 3,
+     *      max = 25,
+     *      minMessage = "Enter at least {{ limit }} characters",
+     *      maxMessage = "Enter no more than {{ limit }} characters"
+     * )
      *
      */
-
     private $plainPassword;
+
     /**
      * @var string
      *

@@ -91,17 +91,17 @@ class WarriorCosts
     }
 
     /**
-     * @return Stock
+     * @return StockType
      */
-    public function getStockType(): Stock
+    public function getStockType(): StockType
     {
         return $this->stockType;
     }
 
     /**
-     * @param Stock $stockType
+     * @param StockType $stockType
      */
-    public function setStockType(Stock $stockType): void
+    public function setStockType(StockType $stockType): void
     {
         $this->stockType = $stockType;
     }

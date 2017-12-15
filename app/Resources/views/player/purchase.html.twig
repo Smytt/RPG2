@@ -1,6 +1,28 @@
 {% extends '::base.html.twig' %}
 
+{# @var req \AppBundle\Entity\WarriorRequirements #}
+
 {% block body %}
+    <div class="centered">
+        {{ form(form) }}
+
+
+        {% if requirementsMet is defined %}
+            <h1>Can't purchase! You need:</h1>
+            {% for warrior in app.user.planet.warriors %}
+                {% if warrior.type.id == data['warriorType'].id %}
+                    {% for req in warrior.type.requirements %}
+                        <h2>{{ req.buildingType.type }} - level {{ req.requiredLevel }}</h2>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+            <h2></h2>
+        {% elseif canPurchase is defined %}
+            <h2>You can't purchase more than {{ max }} {{ data['warriorType'].type }} with your current resources</h2>
+        {% elseif formSubmitted %}
+            <h2>Done! Purchased {{ data['quantity'] }} {{ data['warriorType'].type }} </h2>
+        {% endif %}
+    </div>
 
 {% endblock %}
 

@@ -6,6 +6,12 @@
 {% endblock %}
 
 {% block body %}
-Battle of {{ battle.aggressor.username }} against {{ battle.victim.username }}
+    {% if battle.active %}
+        <h2 class="centered">clash in {{ timeLeft.h }}:{{ timeLeft.i }}:{{ timeLeft.s }}</h2>
+    {% elseif date() < date(battle.returnDue) %}
+        <h2>returning in {{ timeToReturn.h }}:{{ timeToReturn.i }}:{{ timeToReturn.s }}</h2>
+    {% else %}
+        battle is over
+    {% endif %}
 {% endblock %}
 
