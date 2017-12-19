@@ -71,16 +71,16 @@
             <h3>Currently being attacked by</h3>
             {% for battle in user.battlesAsVictim %}
                 {% if battle.active %}
-                    <div class="one-user" href="{{ path('battle_resume', {'id': battle.id}) }}">
+                    <a class="one-user" href="{{ path('battle_resume', {'id': battle.id}) }}">
                         <img src="{{ asset('assets/players/'~ (battle.aggressor.id % 31) ~'.jpg') }}" alt="">
-                        <span>{{ user.username }}</span>
-                    </div>
+                        <span>{{ battle.aggressor.username }}</span>
+                    </a>
                     {% set one = 1 %}
                 {% endif %}
             {% else %}
                 nodbody
             {% endfor %}
-            {% if one == 1 %}
+            {% if one == 0 %}
                 Nobody
             {% endif %}
         </div>

@@ -13,6 +13,7 @@ use AppBundle\Entity\WarriorCosts;
 use AppBundle\Entity\WarriorRequirements;
 use AppBundle\Entity\WarriorType;
 use AppBundle\Repository\BattleRepository;
+use AppBundle\Service\BattleService;
 use Doctrine\Common\Collections\Collection;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -36,9 +37,10 @@ class WarriorsController extends Controller
      * @Route("/attack/{username}", name="attack_user")
      * @param Request $request
      * @param string $username
+     * @param BattleService $battleService
      * @return Response
      */
-    public function attackUserAction(Request $request, $username)
+    public function attackUserAction(Request $request, $username, BattleService $battleService)
     {
         /**
          * @var User
@@ -56,13 +58,6 @@ class WarriorsController extends Controller
             return $this->render('generalError.html.twig', ['message' => $message]);
         }
 
-        $battle = $this->getDoctrine()->getRepository(Battle::class)
-            ->findOneBy(['aggressor' => $aggressor, 'victim' => $victim, 'isActive' => 1]);
-
-        if ($battle) {
-            return $this->redirectToRoute('battle_resume', ['id' => $battle->getId()]);
-        }
-
         $distance = $this->findDistance($victim, $aggressor);
         $timeDistance = $this->findTimeDistance($victim, $aggressor);
         $timeInEachDirection = ceil($distance * self::TIME_PER_BLOCK + $timeDistance * self::TIME_PER_YEAR);
@@ -71,6 +66,7 @@ class WarriorsController extends Controller
         $form->handleRequest($request);
 
         $canMakeTrip = $this->canMakeTrip($aggressor, $distance, $timeDistance);
+        $canMakeTrip = $battleService->canMakeTrip($aggressor, $distance, $timeDistance);
 
         if ($form->isValid() && $form->isSubmitted() && $canMakeTrip) {
             return $this->makeBattle($aggressor, $victim, $distance, $timeDistance, $timeInEachDirection, $form);
@@ -98,7 +94,6 @@ class WarriorsController extends Controller
 
         $battles = $this->getDoctrine()->getRepository(Battle::class)->findBy(['id' => $id]);
         $battle = $battles[0];
-
         if ($battle->getAggressor() !== $user && $battle->getVictim() != $user) {
             $message = "This battle is not yours.";
             return $this->render('generalError.html.twig', ['message' => $message]);
@@ -164,18 +159,18 @@ class WarriorsController extends Controller
         //subtract cost of travel
         foreach ($aggressor->getPlanet()->getStocks() as $stock) {
             $stock->setQuantity($stock->getQuantity() -
-                 ceil($stock->getType()->getCostPerBlockTravel() * 2 * $distance) -
+                ceil($stock->getType()->getCostPerBlockTravel() * 2 * $distance) -
                 ceil($stock->getType()->getCostPerYearTravel() * 2 * $timeDistance));
         }
 
         //subtract warriors of aggressor and insert into battlewarriors entity
         foreach ($form->getData() as $warriorType => $quantity) {
-            $battleWarrior = new BattleWarrior($quantity, $battle, $aggressor);
+            $battleWarriorBatch = new BattleWarrior($quantity, $battle);
             foreach ($aggressor->getPlanet()->getWarriors() as $currentWarrior) {
                 if ($currentWarrior->getType()->getId() == $warriorType) {
-                    $battleWarrior->setType($currentWarrior->getType());
+                    $battleWarriorBatch->setType($currentWarrior->getType());
                     $currentWarrior->setQuantity($currentWarrior->getQuantity() - $quantity);
-                    $em->persist($battleWarrior);
+                    $em->persist($battleWarriorBatch);
                 }
             }
         }
@@ -214,7 +209,7 @@ class WarriorsController extends Controller
 
         $query = "mysql --user={$user} --password={$pass} {$db} < c:/Temp/{$fileSQL}";
         exec($query);
-        unlink("c:/Temp/{$fileSQL}");
+//        unlink("c:/Temp/{$fileSQL}");
     }
 
     private function createFormChooseWarriors(User $aggressor)

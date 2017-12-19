@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class GameController extends Controller
 {
     /**
-     * @Route("/allusers", name="all_users")
+     * @Route("/players", name="all_users")
      */
     public function showAllUsers()
     {
@@ -19,7 +19,7 @@ class GameController extends Controller
 
 
     /**
-     * @Route("/profile/{username}", name="user_profile")
+     * @Route("/player/{username}", name="user_profile")
      */
     public function showOneUser(string $username)
     {

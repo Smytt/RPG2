@@ -1,17 +1,73 @@
 {# @var battle \AppBundle\Entity\Battle #}
+{# @var warrior \AppBundle\Entity\BattleWarrior #}
 {% extends '::base.html.twig' %}
 
 {% block title %}
-
+    {{ battle.aggressor.username == app.user.username ? 'You' : battle.aggressor.username }}
+    vs
+    {{ battle.victim.username == app.user.username ? 'You' : battle.victim.username }}
 {% endblock %}
 
 {% block body %}
-    {% if battle.active %}
-        <h2 class="centered">clash in {{ timeLeft.h }}:{{ timeLeft.i }}:{{ timeLeft.s }}</h2>
-    {% elseif date() < date(battle.returnDue) %}
-        <h2>returning in {{ timeToReturn.h }}:{{ timeToReturn.i }}:{{ timeToReturn.s }}</h2>
-    {% else %}
-        battle is over
+
+    <div class="vs-block">
+        <div class="attacker">
+            <img class="useravatar" src="{{ asset('assets/players/'~ (battle.aggressor.id % 31) ~'.jpg') }}" alt="">
+            <img class="userplanet" src="{{ asset('assets/planets/'~ (battle.aggressor.id % 15) ~'.jpg') }}" alt="">
+            <span>{{ battle.aggressor.username == app.user.username ? 'You' : battle.aggressor.username }}</span>
+        </div>
+        <div class="vs">
+            vs
+        </div>
+        <div class="victim">
+            <img class="useravatar" src="{{ asset('assets/players/'~ (battle.victim.id % 31) ~'.jpg') }}" alt="">
+            <img class="userplanet" src="{{ asset('assets/planets/'~ (battle.victim.id % 15) ~'.jpg') }}" alt="">
+            <span>{{ battle.victim.username == app.user.username ? 'You' : battle.victim.username }}</span>
+        </div>
+    </div>
+
+    <div class="centered">
+        {% if battle.active %}
+            <h2 class="centered">Clash in...</h2>
+            <h1 class="centered">{{ timeLeft.h }} : {{ timeLeft.i }} : {{ timeLeft.s }}</h1>
+        {% else %}
+            <h2>Battle ended </h2>
+            <h1>{{ battle.battleHappen|date('d/m/Y h:i:s') }}</h1>
+
+            {% if app.user.id == battle.aggressor.id and date() < date(battle.returnDue) %}
+                <h2 class="centered">Returning in...</h2>
+                <h1 class="centered">{{ timeToReturn.h }}:{{ timeToReturn.i }}:{{ timeToReturn.s }}</h1>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    {% if not battle.active %}
+        <div class="vs-block">
+            <div class="attacker">
+                <h1>{{ battle.winner.id == battle.aggressor.id ? 'Winner':'Loser' }}</h1>
+            </div>
+            <div class="victim">
+                <h1>{{ battle.winner.id == battle.victim.id ? 'Winner':'Loser' }}</h1>
+            </div>
+        </div>
+
+        {% for warrior in battle.warriors %}
+            <div class="stats">
+                <div><span>started width</span>
+                    <div>{{ warrior.aggressorStartedWith }}</div>
+                </div>
+                <div><span>lost in battle</span>
+                    <div>{{ warrior.aggressorLostInBattle }}</div>
+                </div>
+                <div><img src="{{ asset('assets/warriors/'~ warrior.type.id ~'.jpg') }}" alt=""></div>
+                <div><span>started width</span>
+                    <div>{{ warrior.victimSartedWith }}</div>
+                </div>
+                <div><span>lost in battle</span>
+                    <div>{{ warrior.victimLostInBattle }}</div>
+                </div>
+            </div>
+        {% endfor %}
     {% endif %}
 {% endblock %}
 

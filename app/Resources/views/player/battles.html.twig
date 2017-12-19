@@ -1,0 +1,48 @@
+{% extends '::base.html.twig' %}
+
+{% block body %}
+    <div class="battles">
+        <div class="attacking">
+            <h3>As attacker</h3>
+            {% for battle in battlesasAggressor %}
+                <a class="one-user" href="{{ path('battle_resume', {'id': battle.id}) }}">
+                    <img src="{{ asset('assets/players/'~ (battle.victim.id % 31) ~'.jpg') }}" alt="">
+                    <span>{{ battle.victim.username }}</span>
+                    {% if battle.active %}
+                        <span class="extra">Time of clash: {{ battle.battleHappen|date('d/m/Y H:i:s') }}</span>
+                    {% elseif date() < battle.returnDue %}
+                        <span class="extra">Troops returning: {{ battle.returnDue|date('d/m/Y H:i:s') }}</span>
+                    {% else %}
+                        <span class="extra">Battle {{ battle.winner.id == app.user.id? 'WON' : 'LOST' }}: {{ battle.battleHappen|date('d/m/Y H:i:s') }}</span>
+                    {% endif %}
+                </a>
+            {% else %}
+                Nobody
+            {% endfor %}
+        </div>
+
+        <div class="defending">
+            <h3>As defender</h3>
+            {% for battle in battlesAsVictim %}
+                <a class="one-user" href="{{ path('battle_resume', {'id': battle.id}) }}">
+                    <img src="{{ asset('assets/players/'~ (battle.aggressor.id % 31) ~'.jpg') }}" alt="">
+                    <span>{{ battle.aggressor.username }}</span>
+                    {% if battle.active %}
+                        <span class="extra">Time of clash: {{ battle.battleHappen|date('d/m/Y H:i:s') }}</span>
+                    {% elseif date() < battle.returnDue %}
+                        <span class="extra">Troops returning: {{ battle.returnDue|date('d/m/Y H:i:s') }}</span>
+                    {% else %}
+                        <span class="extra">Battle {{ battle.winner.id == app.user.id? 'WON' : 'LOST' }}: {{ battle.battleHappen|date('d/m/Y H:i:s') }}</span>
+                    {% endif %}
+                </a>
+            {% else %}
+                nodbody
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block title %}
+    My battles
+{% endblock %}
+

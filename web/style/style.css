@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css?family=Raleway');
+@import url('https://fonts.googleapis.com/css?family=Bungee');
 
 body {
     padding: 0;
@@ -377,9 +378,11 @@ h1 a {
 .centered {
     text-align: center;
 }
+
 .centered label {
     text-align: left;
 }
+
 .centered h1 {
     text-align: center;
 }
@@ -430,9 +433,72 @@ img.round {
 .battles > div {
     width: 49%;
 }
+
 .defending {
     text-align: right;
 }
 
+.defending a * {
+    float: right !important;
+}
+
 a.one-user {
-    display: block;}
+    display: block;
+}
+
+.attacker {
+    text-align: right;
+}
+
+.victim {
+    text-align: left;
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.stats > div {
+    width: 120px;
+    justify-content: center;
+    flex-direction: column;
+    margin: 0 5px;
+}
+
+.stats span {
+    text-transform: uppercase;
+    font-size: 12px;
+    display: block;
+    margin: auto;
+    text-align: center;
+}
+
+.stats div div {
+    font-size: 36px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+
+}
+
+.stats img {
+    width: 80px;
+    height: 80px;
+    display: block;
+    margin: auto;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.battles .attacking .extra {
+    width: 270px;
+    text-align: right;
+    font-size: 14px;
+}
+.battles .defending .extra {
+    width: 270px;
+    text-align: left;
+    font-size: 14px;
+}

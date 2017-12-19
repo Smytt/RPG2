@@ -30,7 +30,7 @@
         <h1>From <span>{{ app.user.planet.name }}</span> to <span>{{ victim.planet.name }}</span></h1>
         <section class="stocks remove-bg">
             {% for stock in app.user.planet.stocks %}
-                {% if stock.type.costPerYearTravel == 0 %}
+                {% if not stock.type.costPerBlockTravel == 0 %}
                     <div style="width: calc({{ (100 /  app.user.planet.stocks|length)|round(0,'floor') }}% - 20px);
                     {{ stock.quantity < (stock.type.costPerBlockTravel * distance * 2) ? 'background-color: rgba(224, 32, 0, 0.6)':'' }}">
                         <img class="main" src="{{ asset('assets/stocks/' ~ stock.type.id ~ '.jpg') }}" alt="">
@@ -47,7 +47,7 @@
             in time to <span>year {{ victim.planet.coordinateTime }}</span></h1>
         <section class="stocks remove-bg">
             {% for stock in app.user.planet.stocks %}
-                {% if stock.type.costPerBlockTravel == 0 %}
+                {% if not stock.type.costPerYearTravel == 0 %}
                     <div style="width: calc({{ (100 /  app.user.planet.stocks|length)|round(0,'floor') }}% - 20px);
                     {{ stock.quantity < (stock.type.costPerYearTravel * timeDistance * 2) ? 'background-color: rgba(224, 32, 0, 0.6)':'' }}">
                         <img class="main" src="{{ asset('assets/stocks/' ~ stock.type.id ~ '.jpg') }}" alt="">
