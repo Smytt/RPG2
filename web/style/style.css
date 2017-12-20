@@ -502,3 +502,7 @@ a.one-user {
     text-align: left;
     font-size: 14px;
 }
+
+.remove-bg > div {
+    width: 200px;
+}

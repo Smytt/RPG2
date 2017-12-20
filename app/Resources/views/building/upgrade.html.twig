@@ -32,8 +32,7 @@
                 {% for res in building.type.cost %}
                     {% for stock in building.planet.stocks %}
                         {% if res.stockType.id == stock.type.id %}
-                            <div style="width: calc({{ (100 /  building.type.cost|length)|round(0,'floor') }}% - 20px);
-                            {{ stock.quantity <  res.requiredAmount * (building.level + 1) ? 'background-color: rgba(224, 32, 0, 0.6)':'' }}">
+                            <div style="{{ stock.quantity <  res.requiredAmount * (building.level + 1) ? 'background-color: rgba(224, 32, 0, 0.6)':'' }}">
                                 <img class="main" src="{{ asset('assets/stocks/' ~ stock.type.id ~ '.jpg') }}" alt="">
                                 <p>You have:</p>
                                 <p class="right">You need:</p>

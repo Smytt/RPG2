@@ -33,3 +33,16 @@ services:
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
+
+    AppBundle\Service\BattleService:
+        arguments:
+            $db: '%database_name%'
+            $pass: '%database_password%'
+            $user: '%database_user%'
+
+    AppBundle\Service\BuildingService:
+        arguments:
+            $db: '%database_name%'
+            $pass: '%database_password%'
+            $user: '%database_user%'
+

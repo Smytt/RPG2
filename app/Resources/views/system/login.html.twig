@@ -2,9 +2,12 @@
 
 {% block body %}
     {% if error %}
-        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        <h1>{{ error.messageKey|trans(error.messageData, 'security') }}</h1>
     {% endif %}
 
+    {% if message %}
+        <h1>{{ message }}</h1>
+    {% endif %}
     <form action="{{ path('login') }}" method="post">
         <label for="username">Username:</label>
         <input type="text" id="username" name="_username" value="{{ last_username }}"/>

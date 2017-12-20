@@ -21,33 +21,6 @@ class PlayerController extends Controller
             return $this->render('home.html.twig');
         }
 
-        /**
-         * @var User
-         */
-        $user = $this->getUser();
-        return $this->render('player/dashboard.html.twig', ['user' => $user]);
-    }
-
-    /**
-     * @Route("/battles", name="my_battles")
-     */
-
-    public function viewAllBattlesAction()
-    {
-        /**
-         * @var User
-         */
-        $user = $this->getUser();
-
-        $battlesAsVictim = $this->getDoctrine()->getRepository(Battle::class)
-            ->findBy(['victim' => $user]);
-        $battlesAsAggressor = $this->getDoctrine()->getRepository(Battle::class)
-            ->findBy(['aggressor' => $user]);
-
-        return $this->render('player/battles.html.twig',
-            [
-                'battlesAsVictim' => $battlesAsVictim,
-                'battlesasAggressor' => $battlesAsAggressor
-            ]);
+        return $this->render('player/dashboard.html.twig');
     }
 }

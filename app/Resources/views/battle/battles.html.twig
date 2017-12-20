@@ -4,7 +4,7 @@
     <div class="battles">
         <div class="attacking">
             <h3>As attacker</h3>
-            {% for battle in battlesasAggressor %}
+            {% for battle in battlesAsAggressor %}
                 <a class="one-user" href="{{ path('battle_resume', {'id': battle.id}) }}">
                     <img src="{{ asset('assets/players/'~ (battle.victim.id % 31) ~'.jpg') }}" alt="">
                     <span>{{ battle.victim.username }}</span>
@@ -36,7 +36,7 @@
                     {% endif %}
                 </a>
             {% else %}
-                nodbody
+                Nobody
             {% endfor %}
         </div>
     </div>
